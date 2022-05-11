@@ -1,0 +1,173 @@
+hostname %_sys_hostname%
+user admin group administrators password plaintext XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+clock timezone america/edmonton
+ntp server 0.ca.pool.ntp.org iburst
+ntp server 1.ca.pool.ntp.org iburst
+ntp enable
+!
+!
+!
+!
+ssh server vrf default
+ssh server vrf mgmt
+
+%if stack=1%
+    %_sys_stack_command%
+    vsf secondary-member 2
+    %if vsf_Member1%
+    vsf member 1
+            type %vsf_Member1%
+            link 1 %vsf_Member1_Link1%
+            %if vsf_Member1_Link2%
+                link 2 %vsf_Member1_Link2%
+            %endif%
+    %endif%
+    %if vsf_Member2%
+        vsf member 2
+            type %vsf_Member2%
+            link 1 %vsf_Member2_Link1%
+            %if vsf_Member2_Link2%
+                link 2 %vsf_Member2_Link2%
+            %endif%
+    %endif%
+    %if vsf_Member3%
+        vsf member 3
+            type %vsf_Member3%
+            link 1 %vsf_Member3_Link1%
+            %if vsf_Member3_Link2%
+                link 2 %vsf_Member3_Link2%
+            %endif%
+    %endif%
+    %if vsf_Member4%
+        vsf member 4
+            type %vsf_Member4%
+            link 1 %vsf_Member4_Link1%
+            %if vsf_Member4_Link2%
+                link 2 %vsf_Member4_Link2%
+            %endif%
+    %endif%
+%endif%
+!
+!
+%if OSPF_Area%
+router ospf 1
+    router-id %RouterID%
+    area %OSPF_Area%
+%endif%
+!
+!
+!
+vlan 1
+%if Voice_VLAN_ID%
+vlan %Voice_VLAN_ID%
+    description *** VOICE ***
+    name VOICE
+    voice
+%endif%
+%if Data_VLAN_ID%
+vlan %Data_VLAN_ID%
+    description *** DATA ***
+    name DATA
+%endif%
+%if Transit_VLAN_ID%
+vlan %Transit_VLAN_ID%
+    description *** TRANSIT ***
+    name TRANSIT
+%endif%
+spanning-tree
+spanning-tree priority 1
+interface mgmt
+    no shutdown
+    ip dhcp
+!
+%if VoIP_Equipment_Ports%
+interface %VoIP_Equipment_Ports%
+    no shutdown
+    vlan access %Voice_VLAN_ID%
+    description *** VoIP Equipment ***
+    spanning-tree bpdu-filter
+    spanning-tree port-type admin-edge
+%endif%
+!
+%if Phone_PC_Ports%
+interface %Phone_PC_Ports%
+    no shutdown
+    vlan trunk native %Data_VLAN_ID%
+    vlan trunk allowed all
+    description *** PHONE/PC ***
+    spanning-tree bpdu-filter
+    spanning-tree loop-guard
+    spanning-tree port-type admin-edge
+%endif%
+!
+!
+%if UPLINK_Ports%
+interface %UPLINK_Ports%
+    no shutdown
+    vlan trunk native 1
+    vlan trunk allowed all
+    description *** UPLINK ***
+%endif%
+!
+%if loopback_10_IP_RouterID%
+interface loopback 10
+    description *** RouterID ***
+    ip address %loopback_10_IP_RouterID%
+    ip ospf 1 area %OSPF_Area%
+%endif%
+!
+%if loopback_205_IP%
+interface loopback 205
+    ip address %loopback_205_IP%
+    description *** Monitoring ***
+%endif%
+interface vlan 1
+    shutdown
+    description UNUSED PORT
+    no ip dhcp
+!
+%if Voice_VLAN_ID%
+interface vlan %Voice_VLAN_ID%
+    ip address %Voice_VLAN_IP%
+    description *** VOICE VLAN interface ***
+    %if OSPF_Area%
+    ip ospf 1 area %OSPF_Area%
+    %endif%
+%endif%
+!
+%if Data_VLAN_ID%
+interface vlan %Data_VLAN_ID%
+    ip address %Data_VLAN_IP%
+    description *** DATA VLAN interface ***
+    %if OSPF_Area%
+    ip ospf 1 area %OSPF_Area%
+    %endif%
+%endif%
+!
+%if Transit_VLAN_ID%
+interface vlan %Transit_VLAN_ID%
+    %if Transit_VLAN_IP%
+    ip address %Transit_VLAN_IP%
+    %endif%
+    description *** TRANSIT VLAN interface ***
+    %if OSPF_Area%
+    ip ospf 1 area %OSPF_Area%
+    %endif%
+%endif%
+snmp-server vrf default
+snmp-server system-location %_sys_hostname%
+snmp-server community XXXXXXXXXXXXXXXX
+ip route 0.0.0.0/0 %Default_Gateway%
+ip dns domain-name domainname.co vrf default
+ip dns server-address 1.0.0.1
+ip dns server-address 1.1.1.1
+ip dns server-address 8.8.8.8
+!
+!
+!
+!
+!
+!
+https-server vrf default
+https-server vrf mgmt
+

@@ -1,0 +1,131 @@
+? Network topology/architecture
+LAN -> Core conn. throughput
+
+Devices models and limitations (eg. apple devices, control systems)
+# of devices
+- wired devices
+- wireless devices
+ ?Configure groups for access points
+  ? preferred modulation type
+- 802.11b: BPSK, QPSK, CCK
+- 802.11a/g/n: BPSK, QPSK, 16-QAM, 64-QAM, 256-QAM
+(proprietary extension)
+- 802.11ac: BPSK, QPSK, 16-QAM, 64-QAM, 256-QAM,
+1024 QAM (proprietary extension)
+- 802.11ax: BPSK, QPSK, 16-QAM, 64-QAM, 256-QAM,
+1024 QAM
+• 802.11n high-throughput (HT) support: HT 20/40
+• 802.11ac very high throughput (VHT) support: VHT
+20/40/80/160
+• 802.11ax high efficiency (HE) support: HE20/40/80/160
+
+
+7220 Controller Options
+	
+	? Software
+	Step 5: Select Software (Optional)
+Central
+1 Aruba Central DM 1 Token 1y Sub E-STU JY925AAE
+1 Aruba Central DM 1 Token 3y Sub E-STU JY926AAE
+1 Aruba Central DM 1 Token 5y Sub E-STU JY927AAE
+Notes: Includes Network Management and monitoring capabilities
+1 Aruba Central Svc 1 Token 1y Sub E-STU JY928AAE
+1 Aruba Central Svc 1 Token 3y Sub E-STU JY929AAE
+1 Aruba Central Svc 1 Token 5y Sub E-STU JY930AAE
+1 Aruba Central 5yr E-Rate Bndl E-STU JZ017AAE
+Notes: Enables one of the following services for one access point: Guest WiFi, Presence Analytics, or
+Clarity. To enable all 3 services, you must order 3 subscriptions for each AP.
+1 Aruba Web Enfr IAP 1yr Sub E-STU JW455AAE
+1 Aruba Web Enfr IAP 3yr Sub E-STU JW456AAE
+1 Aruba Web Enfr IAP 5yr Sub E-STU JW457AAE
+Notes: Cloud web policy enforcement for 1 AP (NOT required for Access Points with Central
+Subscription)
+3 Aruba COP Campus GW Ctr Fd 1yr Sub E-STU R6U58AAE
+3 Aruba COP Campus GW Ctr Fd 3yr Sub E-STU R6U59AAE
+3 Aruba COP Campus GW Ctr Fd 5yr Sub E-STU R6U60AAE
+3 Aruba COP Campus GW Ctr Fd 7yr Sub E-STU R6U61AAE
+3 Aruba COP Campus GW Ctr Fd 10y Sub E-STU R6U62AAE
+
+Controller Setup
+- Console in
+To reset user account 
+    Username - password
+    Password - forgetme!
+(old-config)
+
+Go into config mode - conf term
+  mgmt-user username rolename
+      rolename preferred is root user
+
+# show license
+ 'copy license keys to secure doc'
+
+
+Config order <Ctrl P> Previous question <Ctrl X> Restart beginning 
+			<Ctrl D> Delete
+*helpful show run utility on Aruba /keyword to continue traversing from that point.
+* adding "| include" or "| start" in command to only show specific results
+
+System name: 
+#CTN-XXX-7220-xx
+
+Role: 
+#Master or Local
+
+VLan 1 IP address:
+#xxx.xxx.xxx.xxx
+
+Vlan 1 subnet mask:
+#255.x.x.x
+
+IP default gateway
+#x.x.x.x
+
+Option for IPv6 configuration
+#yes or no
+
+Country code
+#US - yes
+
+Time & Time zone:
+#MST-8
+#HH:MM:SS
+#MM/DD/YYYY
+
+Admin password 
+#password
+
+Enable mode password
+#password
+
+Ports shutdown 
+#no
+
+Select config type 
+#full or partial 
+auto reboot
+
+
+7220 Post reboot 
+>en
+#conf t
+#loginsession timeout 0
+#web-server profile
+#session-timeout 3600 *60 minutes*
+#exit
+
+vlan config
+#vlan id description 
+#show vlan
+#jumbo
+
+#interface range gigabitEthernet 0/0/0-0/x
+#lldp transmit
+#lldp receive
+#lacp group 0 mode active
+
+#interface port-channel 0
+#switchport mode trunk
+#switchport trunk allowed vlan ID, ID
+
+
